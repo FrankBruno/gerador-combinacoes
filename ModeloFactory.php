@@ -9,12 +9,13 @@ namespace FrankBruno\GeradorCombinacoes;
 class ModeloFactory
 {
     /**
-     * @param int $quantidade
+     * @param int $inicio
+     * @param int $fim
      * @param int $agrupamento
      * @return Modelo
      */
-    public static function criar($quantidade, $agrupamento)
+    public static function criar($inicio, $fim, $agrupamento)
     {
-        return new Modelo($quantidade, $agrupamento);
+        return new Modelo($inicio, $fim, $agrupamento);
     }
 }
