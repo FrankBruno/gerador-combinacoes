@@ -1,0 +1,22 @@
+{
+  "name": "frankbruno/gerador-combinacoes",
+  "description": "Ferramenta responsável por gerar combinações agrupadas.",
+  "type": "library",
+  "require": {
+    "php": "^7.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "FrankBruno\\GeradorCombinacoes\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Frank Bruno",
+      "email": "frank-bruno@msn.com"
+    }
+  ]
+}
