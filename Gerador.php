@@ -19,12 +19,26 @@ class Gerador
     private $conteudo;
 
     /**
+     * @var int
+     */
+    private $quantidadeCombinacoes = 0;
+
+
+    /**
      * Gerador constructor.
      * @param Modelo $modelo
      */
     public function __construct(Modelo $modelo)
     {
         $this->modelo = $modelo;
+    }
+
+    /**
+     * @return int
+     */
+    public function getQuantidadeCombinacoes(): int
+    {
+        return $this->quantidadeCombinacoes;
     }
 
     /**
@@ -47,14 +61,15 @@ class Gerador
      * @param array $acc
      * @return string
      */
-    public function gerar($initValue, $limitValue, $recLimit = 0, $recIndex = 0, $acc = [])
+    public function gerar($initValue, $limitValue, $recLimit = 0, $recIndex = 1, $acc = [])
     {
         for ($i = $initValue; $i <= $limitValue; $i++) {
             $newAcc = array_merge($acc, [$i]);
             if ($recIndex < $recLimit) {
                 $this->gerar($i + 1, $limitValue, $recLimit, $recIndex + 1, $newAcc);
             } else {
-                $this->conteudo .= implode(',', $newAcc) . "<br>";
+                $this->quantidadeCombinacoes++;
+                $this->conteudo .= implode(',', $newAcc) . PHP_EOL;
             }
         }
 

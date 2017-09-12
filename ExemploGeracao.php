@@ -11,4 +11,8 @@ $agrupador = 2;
 $modelo = \FrankBruno\GeradorCombinacoes\ModeloFactory::criar($incio, $fim, $agrupador);
 $gerador = new \FrankBruno\GeradorCombinacoes\Gerador($modelo);
 
-echo $gerador->gerarConteudo();
+$arquivo = $gerador->gerarConteudo();
+//echo $arquivo;
+//file_put_contents('arquivo.txt', $arquivo);
+
+echo $gerador->getQuantidadeCombinacoes();
