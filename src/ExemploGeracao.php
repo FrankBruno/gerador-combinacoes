@@ -1,8 +1,6 @@
 <?php
 
-require_once __DIR__ . '/Gerador.php';
-require_once __DIR__ . '/Modelo.php';
-require_once __DIR__ . '/ModeloFactory.php';
+require_once __DIR__  . '../vendor/autoload.php';
 
 $incio = 1;
 $fim = 5;
