@@ -1,3 +1,17 @@
+[![Latest Stable Version](https://poser.pugx.org/frankbruno/gerador-combinacoes/v/stable)](https://packagist.org/packages/frankbruno/gerador-combinacoes)
+
+[![Total Downloads](https://poser.pugx.org/frankbruno/gerador-combinacoes/downloads)](https://packagist.org/packages/frankbruno/gerador-combinacoes)
+
+[![Latest Unstable Version](https://poser.pugx.org/frankbruno/gerador-combinacoes/v/unstable)](https://packagist.org/packages/frankbruno/gerador-combinacoes)
+
+[![License](https://poser.pugx.org/frankbruno/gerador-combinacoes/license)](https://packagist.org/packages/frankbruno/gerador-combinacoes)
+
+[![Monthly Downloads](https://poser.pugx.org/frankbruno/gerador-combinacoes/d/monthly)](https://packagist.org/packages/frankbruno/gerador-combinacoes)
+
+[![Daily Downloads](https://poser.pugx.org/frankbruno/gerador-combinacoes/d/daily)](https://packagist.org/packages/frankbruno/gerador-combinacoes)
+
+[![composer.lock](https://poser.pugx.org/frankbruno/gerador-combinacoes/composerlock)](https://packagist.org/packages/frankbruno/gerador-combinacoes)
+
 # Gerador de Combinações
 ## Exemplo de geração de combinações:
 
