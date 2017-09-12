@@ -4,7 +4,7 @@
 Números de 1 a 5, agrupados de 3 em 3.
 
 Resultado: 
-
+```
 1,2
 1,3
 1,4
@@ -15,3 +15,4 @@ Resultado:
 3,4
 3,5
 4,5
+```
