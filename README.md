@@ -15,7 +15,7 @@
 # Gerador de Combinações
 ## Exemplo de geração de combinações:
 
-Números de 1 a 5, agrupados de 3 em 3.
+Números de 1 a 5, agrupados de 2 em 2.
 
 Resultado: 
 ```
