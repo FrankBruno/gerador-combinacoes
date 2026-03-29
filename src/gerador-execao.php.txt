@@ -1,0 +1,1144 @@
+<?php
+
+session_start();
+ini_set("memory_limit",-1);
+ini_set("max_execution_time",-1);
+
+echo '<pre>';
+
+function ignorarCartaoRegra($dezenas, $quantidade, $cartao) {
+
+    $dezenasRegra = explode(',', $dezenas);
+    $quantidadeRegra = 0;
+
+    foreach ($cartao as $dez) {
+        if(in_array($dez, $dezenasRegra)) {
+            $quantidadeRegra++;
+        }
+    }
+
+    return $quantidadeRegra != $quantidade;
+}
+
+function ignorarCartaoRegraAte($dezenas, $quantidade, $cartao) {
+
+    $dezenasRegra = explode(',', $dezenas);
+    $quantidadeRegra = 0;
+
+    foreach ($cartao as $dez) {
+        if(in_array($dez, $dezenasRegra)) {
+            $quantidadeRegra++;
+        }
+    }
+
+    return $quantidadeRegra > $quantidade;
+}
+
+function gerar($dados) {
+
+    $dezenasRemover = $dados['dezenas_remover'] ? explode(',', $dados['dezenas_remover']): [];
+    $dezenasFixas = $dados['dezenas_fixas'] ? explode(',', $dados['dezenas_fixas']): [];
+
+    $arquivo = explode(PHP_EOL, file_get_contents(__DIR__ . "/arquivos/{$dados['loteria']}/{$dados['soma']}.txt"));
+    
+    $cartoes = [];
+
+    $quantidade = 0;
+    $quantideCartoesPossiveis = count($arquivo);
+
+    $quantidadeDezenasLimitar = $_REQUEST['quantidade_dezenas_limitar'] ?? null;
+    $quantidadeDezenasParesLimitar = $_REQUEST['quantidade_dezenas_pares_limitar'] ?? null;
+    
+
+    switch ($_REQUEST['loteria']) {
+        case 'megasena':
+            $dezenaLimite = 30;
+            break;
+        case 'lotofacil':
+            $dezenaLimite = 15;
+            break;
+        case 'duplasena':
+            $dezenaLimite = 25;
+            break;
+        case 'quina':
+            $dezenaLimite = 40;
+            break;
+        case 'minas5':
+            $dezenaLimite = 17;
+            break;
+        case 'diaDeSorte':
+            $dezenaLimite = 16;
+            break;
+        case 'timemania':
+            $dezenaLimite = 40;
+            break;
+        default:
+            $dezenaLimite = 0;
+            break;
+    }
+
+$dezenasFixas = array_map(function ($dezena) {
+    return ltrim($dezena,0);
+}, $dezenasFixas);
+
+    $quantidadeCartoesRemovidosBloco = 0;
+    $quantidadeCartoesRemovidosFrequencia = 0;
+
+    foreach ($arquivo as $linha) {
+    
+        $incluirCartao = true;
+
+        $numeroDezenasLimitar = 0;
+
+        $cartao = explode(',', $linha);
+        
+        if (!empty($dezenasFixas)) {
+            if (array_diff($dezenasFixas, $cartao)) {
+                continue;
+            }
+        }
+
+        if (!empty(array_intersect($dezenasRemover, $cartao))) {
+            continue;
+        }
+
+        if (!empty($quantidadeDezenasLimitar)) {
+            foreach ($cartao as $dez) {
+                if ($dez <= $dezenaLimite) {
+                    $numeroDezenasLimitar++;
+                }
+            }
+
+            if ($numeroDezenasLimitar != $quantidadeDezenasLimitar) {
+                continue;
+            }
+        }
+
+        if (!empty($quantidadeDezenasParesLimitar)) {
+            
+            $quantidadeDezenasParesLimitacao = 0;
+
+            foreach ($cartao as $dez) {
+
+                if ($dez % 2 == 0 && $dez <= $dezenaLimite) {
+                   $quantidadeDezenasParesLimitacao++; 
+                }
+            }
+
+            if ($quantidadeDezenasParesLimitacao != $quantidadeDezenasParesLimitar) {
+                continue;
+            }
+        }
+
+        // Inicio regra
+        if (!empty($_REQUEST['dezenas_regra_1']) && !empty($_REQUEST['quantidade_dezenas_regra_1'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_1'], $_REQUEST['quantidade_dezenas_regra_1'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_2']) && !empty($_REQUEST['quantidade_dezenas_regra_2'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_2'], $_REQUEST['quantidade_dezenas_regra_2'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_3']) && !empty($_REQUEST['quantidade_dezenas_regra_3'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_3'], $_REQUEST['quantidade_dezenas_regra_3'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_4']) && !empty($_REQUEST['quantidade_dezenas_regra_4'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_4'], $_REQUEST['quantidade_dezenas_regra_4'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_5']) && !empty($_REQUEST['quantidade_dezenas_regra_5'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_5'], $_REQUEST['quantidade_dezenas_regra_5'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_6']) && !empty($_REQUEST['quantidade_dezenas_regra_6'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_6'], $_REQUEST['quantidade_dezenas_regra_6'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_7']) && !empty($_REQUEST['quantidade_dezenas_regra_7'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_7'], $_REQUEST['quantidade_dezenas_regra_7'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_8']) && !empty($_REQUEST['quantidade_dezenas_regra_8'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_8'], $_REQUEST['quantidade_dezenas_regra_8'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_9']) && !empty($_REQUEST['quantidade_dezenas_regra_9'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_9'], $_REQUEST['quantidade_dezenas_regra_9'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_10']) && !empty($_REQUEST['quantidade_dezenas_regra_10'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_10'], $_REQUEST['quantidade_dezenas_regra_10'], $cartao)) {
+                continue;
+            }
+        }
+
+
+        if (!empty($_REQUEST['dezenas_regra_11']) && !empty($_REQUEST['quantidade_dezenas_regra_11'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_11'], $_REQUEST['quantidade_dezenas_regra_11'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_12']) && !empty($_REQUEST['quantidade_dezenas_regra_12'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_12'], $_REQUEST['quantidade_dezenas_regra_12'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_13']) && !empty($_REQUEST['quantidade_dezenas_regra_13'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_13'], $_REQUEST['quantidade_dezenas_regra_13'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_14']) && !empty($_REQUEST['quantidade_dezenas_regra_14'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_14'], $_REQUEST['quantidade_dezenas_regra_14'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_15']) && !empty($_REQUEST['quantidade_dezenas_regra_15'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_15'], $_REQUEST['quantidade_dezenas_regra_15'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_16']) && !empty($_REQUEST['quantidade_dezenas_regra_16'])) {
+            if(ignorarCartaoRegra($_REQUEST['dezenas_regra_16'], $_REQUEST['quantidade_dezenas_regra_16'], $cartao)) {
+                continue;
+            }
+        }
+
+
+        if (!empty($_REQUEST['dezenas_regra_17']) && !empty($_REQUEST['quantidade_dezenas_regra_17'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_17'], $_REQUEST['quantidade_dezenas_regra_17'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_18']) && !empty($_REQUEST['quantidade_dezenas_regra_18'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_18'], $_REQUEST['quantidade_dezenas_regra_18'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_19']) && !empty($_REQUEST['quantidade_dezenas_regra_19'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_19'], $_REQUEST['quantidade_dezenas_regra_19'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_20']) && !empty($_REQUEST['quantidade_dezenas_regra_20'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_20'], $_REQUEST['quantidade_dezenas_regra_20'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_21']) && !empty($_REQUEST['quantidade_dezenas_regra_21'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_21'], $_REQUEST['quantidade_dezenas_regra_21'], $cartao)) {
+                continue;
+            }
+        }
+        if (!empty($_REQUEST['dezenas_regra_22']) && !empty($_REQUEST['quantidade_dezenas_regra_22'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_22'], $_REQUEST['quantidade_dezenas_regra_22'], $cartao)) {
+                continue;
+            }
+        }
+
+
+if (!empty($_REQUEST['dezenas_regra_23']) && !empty($_REQUEST['quantidade_dezenas_regra_23'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_23'], $_REQUEST['quantidade_dezenas_regra_23'], $cartao)) {
+                continue;
+            }
+        }
+
+if (!empty($_REQUEST['dezenas_regra_24']) && !empty($_REQUEST['quantidade_dezenas_regra_24'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_24'], $_REQUEST['quantidade_dezenas_regra_24'], $cartao)) {
+                continue;
+            }
+        }
+
+if (!empty($_REQUEST['dezenas_regra_25']) && !empty($_REQUEST['quantidade_dezenas_regra_25'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_25'], $_REQUEST['quantidade_dezenas_regra_25'], $cartao)) {
+                continue;
+            }
+        }
+
+if (!empty($_REQUEST['dezenas_regra_26']) && !empty($_REQUEST['quantidade_dezenas_regra_26'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_26'], $_REQUEST['quantidade_dezenas_regra_26'], $cartao)) {
+                continue;
+            }
+        }
+
+
+if (!empty($_REQUEST['dezenas_regra_27']) && !empty($_REQUEST['quantidade_dezenas_regra_27'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_27'], $_REQUEST['quantidade_dezenas_regra_27'], $cartao)) {
+                continue;
+            }
+        }
+
+if (!empty($_REQUEST['dezenas_regra_28']) && !empty($_REQUEST['quantidade_dezenas_regra_28'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_28'], $_REQUEST['quantidade_dezenas_regra_28'], $cartao)) {
+                continue;
+            }
+        }
+if (!empty($_REQUEST['dezenas_regra_29']) && !empty($_REQUEST['quantidade_dezenas_regra_29'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_29'], $_REQUEST['quantidade_dezenas_regra_29'], $cartao)) {
+                continue;
+            }
+        }
+
+if (!empty($_REQUEST['dezenas_regra_30']) && !empty($_REQUEST['quantidade_dezenas_regra_30'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_30'], $_REQUEST['quantidade_dezenas_regra_30'], $cartao)) {
+                continue;
+            }
+        }
+
+if (!empty($_REQUEST['dezenas_regra_31']) && !empty($_REQUEST['quantidade_dezenas_regra_31'])) {
+            if(ignorarCartaoRegraAte($_REQUEST['dezenas_regra_31'], $_REQUEST['quantidade_dezenas_regra_31'], $cartao)) {
+                continue;
+            }
+        }        
+
+        // Final regra
+
+        if($incluirCartao == true && in_array($_REQUEST['loteria'], ['megasena', 'quina','duplasena', 'timemania', 'diaDeSorte']) &&  (
+            (!empty($_REQUEST['bloco_dezena']) && !empty($_REQUEST['bloco_dezena_quantidade'])) || 
+            (!empty($_REQUEST['bloco_dezena_igual']) && !empty($_REQUEST['bloco_dezena_quantidade_igual'])) ||
+            (!empty($_REQUEST['sequencia_linhas']))
+        )
+        
+        ) {
+            
+            $blocos['megasena'] = ['1-10' => 0, '11-20' => 0, '21-30' => 0, '31-40' => 0, '41-50' => 0, '51-60' => 0];
+            $blocos = ['1-10' => 0, '11-20' => 0, '21-30' => 0, '31-40' => 0, '41-50' => 0, '51-60' => 0, '61-70' => 0, '71-80' => 0];
+
+            foreach ($cartao as $dezenaCartao) {
+                if ($dezenaCartao >= 1 && $dezenaCartao <= 10) {
+                    $blocos['1-10']++;
+                } elseif ($dezenaCartao >= 11 && $dezenaCartao <= 20) {
+                    $blocos['11-20']++;
+                } elseif ($dezenaCartao >= 21 && $dezenaCartao <= 30) {
+                    $blocos['21-30']++;
+                } elseif ($dezenaCartao >= 31 && $dezenaCartao <= 40) {
+                    $blocos['31-40']++;
+                } elseif ($dezenaCartao >= 41 && $dezenaCartao <= 50) {
+                    $blocos['41-50']++;
+                } elseif ($dezenaCartao >= 51 && $dezenaCartao <= 60) {
+                    $blocos['51-60']++;
+                } elseif ($dezenaCartao >= 61 && $dezenaCartao <= 70 && in_array($_REQUEST['loteria'], ['quina', 'timemania'])) {
+                    $blocos['61-70']++;
+                } elseif ($dezenaCartao >= 71 && $dezenaCartao <= 80 && in_array($_REQUEST['loteria'], ['quina', 'timemania'])) {
+                    $blocos['71-80']++;
+                }
+
+            }
+
+            arsort($blocos);
+	    $paramsImplode = array_values(array_filter($blocos));
+
+            $sequenciaLinhas = implode('-', $paramsImplode);
+
+            $cartaoPossuiDezenasBloco = true;
+
+            if (!empty($_REQUEST['bloco_dezena']) && !empty($_REQUEST['bloco_dezena_quantidade'])) {
+                foreach ($blocos as $bloco) {
+                    if ($_REQUEST['bloco_dezena_quantidade'] < $bloco) {
+                        $cartaoPossuiDezenasBloco = false;
+                        $quantidadeCartoesRemovidosBloco++;
+                        break;
+                    }                
+                }
+            }       
+
+            if (true == $cartaoPossuiDezenasBloco) {
+
+                if (!empty($_REQUEST['bloco_dezena_igual']) && !empty($_REQUEST['bloco_dezena_quantidade_igual'])) {
+                    
+                    $quantidadeLinhasComDezenas = 0;
+                    $podeUtilizar = true;
+                    
+                    foreach ($blocos as $bloco) {
+                        if ($_REQUEST['bloco_dezena_quantidade_igual'] == $bloco) {
+                            $quantidadeLinhasComDezenas++;
+                        } elseif ($bloco > 1) {
+                            $podeUtilizar = false;
+                            break;
+                        }               
+                    }
+
+
+                    if ($_REQUEST['bloco_dezena_quantidade_igual_linhas'] == $quantidadeLinhasComDezenas && true == $podeUtilizar) {
+                        $cartoes[] = $linha;
+                    }
+
+                }  elseif (!empty($_REQUEST['sequencia_linhas'])) {
+                    if ($sequenciaLinhas == $_REQUEST['sequencia_linhas']) {
+                        $cartoes[] = $linha;
+                    }
+                } else {
+                    $cartoes[] = $linha;
+                }
+
+                $quantidade++;
+            }
+           
+        } else {
+
+            if (true == $incluirCartao) {
+                $cartoes[] = $linha;
+                $quantidade++;
+            }
+        }
+    }
+
+     $quantidadePossiveisComPares = null;
+
+    if (!empty($dados['quantidade_dezenas_pares'])) {
+        $cartoes = tratarPares($dados['quantidade_dezenas_pares'], $dados['loteria'], $cartoes);
+        $quantidadePossiveisComPares = count($cartoes);
+    }
+
+    if (!empty($dados['aleatorio'])) {
+        shuffle($cartoes);
+    }
+
+    if (!empty($dados['limite_cartoes'])) {
+        $cartoes = array_slice($cartoes, 0, $dados['limite_cartoes']);
+    }
+
+
+    $quantidadeDezenasRemovidas = count($dezenasRemover);
+
+    $dezenasMaximas = ['megasena' => 60, 'duplasena' => 50, 'minas5' => 34, 'quina' => 80, 'lotofacil' => 25, 'diaDeSorte' => 31, 'timemania' => 80];
+
+    switch ($dados['loteria']) {
+        case 'megasena':
+            $quantidadeDezenasCombinadas = $dezenasMaximas['megasena'] - $quantidadeDezenasRemovidas;
+            $dezenasCombinadas = gerarDezenasCombinadas($dezenasMaximas['megasena'], $dezenasRemover);
+            break;
+
+        case 'lotofacil':
+            $quantidadeDezenasCombinadas = $dezenasMaximas['lotofacil'] - $quantidadeDezenasRemovidas;
+            $dezenasCombinadas = gerarDezenasCombinadas($dezenasMaximas['lotofacil'], $dezenasRemover);
+
+            break;
+        case 'duplasena':
+            $quantidadeDezenasCombinadas = $dezenasMaximas['duplasena'] - $quantidadeDezenasRemovidas;
+            $dezenasCombinadas = gerarDezenasCombinadas($dezenasMaximas['duplasena'], $dezenasRemover);
+            break;
+
+        case 'minas5':
+            $quantidadeDezenasCombinadas = $dezenasMaximas['minas5'] - $quantidadeDezenasRemovidas;
+            $dezenasCombinadas = gerarDezenasCombinadas($dezenasMaximas['minas5'], $dezenasRemover);
+            break;
+
+        case 'quina':
+            $quantidadeDezenasCombinadas = $dezenasMaximas['quina'] - $quantidadeDezenasRemovidas;
+            $dezenasCombinadas = gerarDezenasCombinadas($dezenasMaximas['quina'], $dezenasRemover);
+            break;
+
+        case 'diaDeSorte':
+            $quantidadeDezenasCombinadas = $dezenasMaximas['diaDeSorte'] - $quantidadeDezenasRemovidas;
+            $dezenasCombinadas = gerarDezenasCombinadas($dezenasMaximas['diaDeSorte'], $dezenasRemover);
+            break;
+
+        case 'timemania':
+            $quantidadeDezenasCombinadas = $dezenasMaximas['timemania'] - $quantidadeDezenasRemovidas;
+            $dezenasCombinadas = gerarDezenasCombinadas($dezenasMaximas['timemania'], $dezenasRemover);
+            break;
+
+        default:
+            $quantidadeDezenasCombinadas = 'todas';
+            break;
+    }
+
+
+    if (!empty($_REQUEST['frequencia'])) {
+        
+        $frequencias = explode(PHP_EOL, file_get_contents(__DIR__ . "/arquivos/{$dados['loteria']}/frequencia.txt"));
+        
+        $frequenciasUtilizar = [];
+        $freInicial = 1;
+
+        foreach ($frequencias as $f => $frequencia) {
+            $freqSeparada = explode(',', $frequencia);
+            $frequenciasUtilizar[$freqSeparada[0]] = $freqSeparada[1];
+        }
+
+        foreach ($cartoes as $c => $cartao) {
+            $somaFrequenciaCartao = 0;
+            $dezenasCartao = explode(',', $cartao);
+
+
+            foreach ($dezenasCartao as $dezena) {
+                $somaFrequenciaCartao+=$frequenciasUtilizar[$dezena];
+            };
+
+             if ($somaFrequenciaCartao != $_REQUEST['frequencia']) {
+                unset($cartoes[$c]);
+                $quantidadeCartoesRemovidosFrequencia++;
+             }
+        }
+    }
+
+    $quantidadeCartoesGerados = count($cartoes);
+
+    return [
+        'loteria' => $dados['loteria'],
+        'soma' => $dados['soma'],
+        'quantideCartoesPossiveis' => $quantideCartoesPossiveis,
+        'quantideCartoesPossiveisComPares' => $quantidadePossiveisComPares,
+        'quantidade' => $quantidade,
+        'dezenasFixas' => !empty($dados['dezenas_fixas_agrupadas_utilizada']) ? [] : $dezenasFixas,
+        'dezenasRemover' => $dezenasRemover,
+        'dezenasCombinadas' => $dezenasCombinadas,
+        'quantidadeDezenasFixas' => count($dezenasFixas),
+        'quantidadeDezenasRemovidas' => $quantidadeDezenasRemovidas,
+        'quantidadeDezenasCombinadas' => $quantidadeDezenasCombinadas,
+        'cartoes' => $cartoes,
+        'quantidadeCartoesGerados' => $quantidadeCartoesGerados,
+        'exibirCartoes' => !empty($dados['exibir_cartoes']),
+        'limiteCartoes' => $dados['limite_cartoes'],
+        'quantidadeDezenasPares' => $dados['quantidade_dezenas_pares'],
+        'quantidadeCartoesRemovidosBloco' => $quantidadeCartoesRemovidosBloco,
+        'quantidadeCartoesRemovidosFrequencia' => $quantidadeCartoesRemovidosFrequencia,
+    ];
+}
+
+function gerarDezenasCombinadas($dezenaMaxima, $dezenasRemover)
+{
+    return array_diff(range(1, $dezenaMaxima), $dezenasRemover);
+}
+
+function tratarPares($quantidadePares, $loteria, $cartoes) 
+{
+    foreach ($cartoes as $cartao => $linha) {
+        $dezenas = explode(',', $linha);
+
+        $pares = 0;
+        $impares = 0;
+
+        foreach ($dezenas as $dezena) {
+            if ($dezena % 2 == 0) {
+                $pares++;
+                continue;
+            } 
+
+            $impares++;
+        }
+
+        if ($quantidadePares != $pares) {
+            unset($cartoes[$cartao]);
+        }
+    }
+
+    return $cartoes;
+
+}
+
+function preencherSelect($valor, $campo)
+{
+    if (isset($_REQUEST[$campo]) && $_REQUEST[$campo] == $valor) {
+        echo "selected='selected'";
+    }
+}
+
+function preencherInput($campo)
+{
+     if (isset($_REQUEST[$campo])) {
+        echo $_REQUEST[$campo];
+    }
+}
+
+if (!empty($_REQUEST)) {
+
+    if (false == empty($_REQUEST['dezenas_fixas_agrupadas'])) {
+        $fixas = array_filter(explode(PHP_EOL, $_REQUEST['dezenas_fixas_agrupadas']));
+        $cartoesTemporario = [];
+
+        foreach ($fixas as $fixa) {
+
+            $fixasSeparadas = explode(',', $fixa);
+            
+            foreach ($fixasSeparadas as $fixaSeparada) {
+                
+                $fixaSeparada = str_pad($fixaSeparada, 2, '0');
+
+                if ('0' == substr($fixaSeparada, -1)) {
+                    $finalDezenaSeparada = 10;
+                } else {
+                    $finalDezenaSeparada = substr($fixaSeparada, -1);
+                }
+
+                
+                $regraRemover = 'quantidade_dezenas_regra_' . $finalDezenaSeparada;
+                
+                if (false == empty($_REQUEST[$regraRemover])) {
+                    continue 2;
+                }
+            }
+
+            $_REQUEST['dezenas_fixas'] = $fixa;
+            $_REQUEST['dezenas_fixas_agrupadas_utilizada'] = true;
+            $resultado = gerar($_REQUEST);
+            
+            $cartoesTemporario = array_merge($cartoesTemporario, $resultado['cartoes']);
+        }
+
+        if (empty($resultado)) {
+            $resultado = [
+                'loteria' => $_REQUEST['loteria'],
+                'soma' => $_REQUEST['soma'],
+                'quantideCartoesPossiveis' => 0,
+                'quantideCartoesPossiveisComPares' => 0,
+                'quantidade' => 0,
+                'dezenasFixas' => 0,
+                'dezenasRemover' => 0,
+                'dezenasCombinadas' => 0,
+                'quantidadeDezenasFixas' => 0,
+                'quantidadeDezenasRemovidas' => 0,
+                'quantidadeDezenasCombinadas' => 0,
+                'cartoes' => [],
+                'quantidadeCartoesGerados' => 0,
+                'exibirCartoes' => false,
+                'limiteCartoes' => 0,
+                'quantidadeDezenasPares' => 0,
+                'quantidadeCartoesRemovidosBloco' => 0,
+                'quantidadeCartoesRemovidosFrequencia' => 0,
+            ];
+        }
+
+        $_REQUEST['dezenas_fixas'] = null;
+        $resultado['cartoes'] = $cartoesTemporario;
+        $resultado['quantidadeCartoesGerados'] = count($cartoesTemporario);
+    } else {
+        $resultado = gerar($_REQUEST);
+    }
+}
+
+
+if (!empty($_REQUEST['dezenas_multiplas']) && !empty($_REQUEST['quantidade_dezenas_multiplas'])) {
+
+	foreach ($resultado['cartoes'] as $chaveMultipla => $cartaoMultipla)  {
+		
+		$cartao = explode(',', $cartaoMultipla);
+
+
+		$multiplas = explode(PHP_EOL, $_REQUEST['dezenas_multiplas']);
+		$quantidadeMultipla = 0;
+		$removerCartaoMultipla = true;
+		
+		foreach ($multiplas as $multipla) {
+
+			$dezenasMultiplas = explode(',', $multipla);
+			
+			foreach ($cartao as $dez) {
+				if(in_array($dez, $dezenasMultiplas)) {
+					$quantidadeMultipla++;
+				}
+			}
+
+			if ($quantidadeMultipla == $_REQUEST['quantidade_dezenas_multiplas']) {
+				$removerCartaoMultipla = false;
+				break;;
+			}
+		}
+		
+		if (true == $removerCartaoMultipla) {
+			unset($resultado['cartoes'][$chaveMultipla]);
+			$resultado['quantidadeCartoesGerados']--;
+		}
+	}
+}
+
+
+if (!empty($_REQUEST['bem_bolado_quantidade'])) {
+
+	function verificarArray($array1, $array2) {
+	    $array1Str = array_map('strval', $array1);
+	    $array2Str = array_map('strval', $array2);
+
+		foreach ($array1Str as $item) {
+			if (!in_array(str_pad($item, strlen(max($array1Str)), '0', STR_PAD_LEFT), $array2Str)) {
+				return false;
+		        }
+	    }
+    
+	    return true;
+	}
+
+	function quantidadeDezenasNaInterseccao($array1, $array2) {
+		$array1Str = array_map(fn($num) => str_pad((string)$num, 2, '0', STR_PAD_LEFT), $array1);
+	    	$array2Str = array_map(fn($num) => str_pad((string)$num, 2, '0', STR_PAD_LEFT), $array2);
+
+		$intersecao = array_intersect($array1Str, $array2Str);
+
+		return count($intersecao);
+	}
+
+
+	$bemBoladoFixas = explode(PHP_EOL, $_REQUEST['bem_bolado_fixas']);
+	$bemBoladoGrupo = explode(PHP_EOL, $_REQUEST['bem_bolado_grupo']);
+	$bemBoladoQuantidadeLinhas = count($bemBoladoFixas);
+
+	foreach ($resultado['cartoes'] as $chaveBemBolado => $bemBoladoCartao) {
+		$bemBoladoCartoesExistem[$chaveBemBolado] = false;
+		$bemBoladoCartaoDezenas = explode(',', $bemBoladoCartao);
+
+		for ($i = 0; $i < $bemBoladoQuantidadeLinhas; $i++) {
+
+			$bemBoladoDezenasFixas = array_filter(explode(',', $bemBoladoFixas[$i]));
+			$bemBoladoDezenasGrupo = array_filter(explode(',', $bemBoladoGrupo[$i]));
+
+			$bemBoladoExistemTodasFixas = verificarArray($bemBoladoDezenasFixas, $bemBoladoCartaoDezenas);	
+
+			$bemBoladoExistemQuantidadeDezenasIntesecao = quantidadeDezenasNaInterseccao($bemBoladoDezenasGrupo, $bemBoladoCartaoDezenas) == ((int)$_REQUEST['bem_bolado_quantidade']);
+
+			if ($bemBoladoExistemTodasFixas && $bemBoladoExistemQuantidadeDezenasIntesecao) {
+				$bemBoladoCartoesExistem[$chaveBemBolado] = true;
+			}
+		}
+
+		if (false == $bemBoladoCartoesExistem[$chaveBemBolado]) {
+			unset($resultado['cartoes'][$chaveBemBolado]);
+			$resultado['quantidadeCartoesGerados']--;
+		}
+	}
+}
+
+echo '</pre>';
+?>
+
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+
+    <style type="text/css">
+        .cor-vermelha {
+            color: red;
+        }
+
+        .cor-azul {
+            color: #2307D7;
+        }
+
+        .cor-verde {
+            color: #086822;
+        }
+    </style>
+</head>
+<body>
+    <form action='' method='get' style="padding: 15px 0 0 15px">
+        <div class="form-group">
+            <label>Loteria:</label>
+            <select class="custom-select" name="loteria" required>
+                <option value="">Selecione a loteria</option>>
+                <option value="lotofacil" <?php preencherSelect('lotofacil', 'loteria'); ?> >Lotofácil</option>
+                <option value="megasena" <?php preencherSelect('megasena', 'loteria'); ?> >Mega Sena</option>
+                <option value="quina" <?php preencherSelect('quina', 'loteria'); ?> >Quina</option>
+                <option value="duplasena" <?php preencherSelect('duplasena', 'loteria'); ?> >Dupla Sena</option>
+                <option value="minas5" <?php preencherSelect('minas5', 'loteria'); ?> >Minas 5</option>
+                <option value="diaDeSorte" <?php preencherSelect('diaDeSorte', 'loteria'); ?> >Dia de Sorte</option>
+                <option value="timemania" <?php preencherSelect('timemania', 'loteria'); ?> >Timemania</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="soma" class="small"><strong>Soma</strong></label>
+            <input type="text" class="form-control" id="soma" name="soma" required value="<?php preencherInput('soma'); ?>">
+        </div> 
+         <div class="form-group">
+            <label for="soma"><strong>Fixas</strong></label>
+            <input size="80px" type="text" class="form-control" id="dezenas_fixas" name="dezenas_fixas" value="<?php preencherInput('dezenas_fixas'); ?>">
+        </div> 
+        <div class="form-group">
+            <label for="soma"><strong>Fixas Agrupadas: </strong></label></br>
+            <textarea cols="100" rows="4" name="dezenas_fixas_agrupadas"><?php preencherInput('dezenas_fixas_agrupadas') ?></textarea>
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Remover</strong></label>
+            <input size="80px" type="text" class="form-control" id="dezenas_remover" name="dezenas_remover" value="<?php preencherInput('dezenas_remover'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Coluna 1: </strong></label>
+            <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_1" value="<?php preencherInput('quantidade_dezenas_regra_1'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra1" name="dezenas_regra_1" value="<?php preencherInput('dezenas_regra_1'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Coluna 2: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_2" value="<?php preencherInput('quantidade_dezenas_regra_2'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra2" name="dezenas_regra_2" value="<?php preencherInput('dezenas_regra_2'); ?>">
+
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Coluna 3: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_3" value="<?php preencherInput('quantidade_dezenas_regra_3'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra3" name="dezenas_regra_3" value="<?php preencherInput('dezenas_regra_3'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Coluna 4: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_4" value="<?php preencherInput('quantidade_dezenas_regra_4'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra4" name="dezenas_regra_4" value="<?php preencherInput('dezenas_regra_4'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Coluna 5: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_5" value="<?php preencherInput('quantidade_dezenas_regra_5'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra5" name="dezenas_regra_5" value="<?php preencherInput('dezenas_regra_5'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Coluna 6: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_6" value="<?php preencherInput('quantidade_dezenas_regra_6'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra4" name="dezenas_regra_6" value="<?php preencherInput('dezenas_regra_6'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Coluna 7: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_7" value="<?php preencherInput('quantidade_dezenas_regra_7'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra7" name="dezenas_regra_7" value="<?php preencherInput('dezenas_regra_7'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Coluna 8: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_8" value="<?php preencherInput('quantidade_dezenas_regra_8'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra8" name="dezenas_regra_8" value="<?php preencherInput('dezenas_regra_8'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Coluna 9: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_9" value="<?php preencherInput('quantidade_dezenas_regra_9'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra9" name="dezenas_regra_9" value="<?php preencherInput('dezenas_regra_9'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Coluna 10: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_10" value="<?php preencherInput('quantidade_dezenas_regra_10'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra10" name="dezenas_regra_10" value="<?php preencherInput('dezenas_regra_10'); ?>">
+        </div>
+       
+        <hr></br>
+
+        <div class="form-group">
+            <label for="soma"><strong>Regra 1: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_11" value="<?php preencherInput('quantidade_dezenas_regra_11'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra11" name="dezenas_regra_11" value="<?php preencherInput('dezenas_regra_11'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Regra 2: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_12" value="<?php preencherInput('quantidade_dezenas_regra_12'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra12" name="dezenas_regra_12" value="<?php preencherInput('dezenas_regra_12'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Regra 3: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_13" value="<?php preencherInput('quantidade_dezenas_regra_13'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra13" name="dezenas_regra_13" value="<?php preencherInput('dezenas_regra_13'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Regra 4: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_14" value="<?php preencherInput('quantidade_dezenas_regra_14'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra14" name="dezenas_regra_14" value="<?php preencherInput('dezenas_regra_14'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Regra 5: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="quantidade_dezenas_regra_15" value="<?php preencherInput('quantidade_dezenas_regra_15'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra15" name="dezenas_regra_15" value="<?php preencherInput('dezenas_regra_15'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Regra 6: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_16" value="<?php preencherInput('quantidade_dezenas_regra_16'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra16" name="dezenas_regra_16" value="<?php preencherInput('dezenas_regra_16'); ?>">
+        </div>
+
+        <hr></br>
+
+
+        <div class="form-group">
+            <label for="soma"><strong>1 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_17" value="<?php preencherInput('quantidade_dezenas_regra_17'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra17" name="dezenas_regra_17" value="<?php preencherInput('dezenas_regra_17'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>2 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_18" value="<?php preencherInput('quantidade_dezenas_regra_18'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra18" name="dezenas_regra_18" value="<?php preencherInput('dezenas_regra_18'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>3 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_19" value="<?php preencherInput('quantidade_dezenas_regra_19'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra19" name="dezenas_regra_19" value="<?php preencherInput('dezenas_regra_19'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>4 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_20" value="<?php preencherInput('quantidade_dezenas_regra_20'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra20" name="dezenas_regra_20" value="<?php preencherInput('dezenas_regra_20'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>5 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_21" value="<?php preencherInput('quantidade_dezenas_regra_21'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra21" name="dezenas_regra_21" value="<?php preencherInput('dezenas_regra_21'); ?>">
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>6 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_22" value="<?php preencherInput('quantidade_dezenas_regra_22'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra22" name="dezenas_regra_22" value="<?php preencherInput('dezenas_regra_22'); ?>">
+        </div>
+
+
+        <div class="form-group">
+            <label for="soma"><strong>7 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_23" value="<?php preencherInput('quantidade_dezenas_regra_23'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra23" name="dezenas_regra_23" value="<?php preencherInput('dezenas_regra_23'); ?>">
+        </div>
+
+
+        <div class="form-group">
+            <label for="soma"><strong>8 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_24" value="<?php preencherInput('quantidade_dezenas_regra_24'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra24" name="dezenas_regra_24" value="<?php preencherInput('dezenas_regra_24'); ?>">
+        </div>
+
+
+        <div class="form-group">
+            <label for="soma"><strong>9 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_25" value="<?php preencherInput('quantidade_dezenas_regra_25'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra25" name="dezenas_regra_25" value="<?php preencherInput('dezenas_regra_25'); ?>">
+        </div>
+
+
+        <div class="form-group">
+            <label for="soma"><strong>10 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_26" value="<?php preencherInput('quantidade_dezenas_regra_26'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra26" name="dezenas_regra_26" value="<?php preencherInput('dezenas_regra_26'); ?>">
+        </div>
+
+
+<div class="form-group">
+            <label for="soma"><strong>11 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_27" value="<?php preencherInput('quantidade_dezenas_regra_27'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra27" name="dezenas_regra_27" value="<?php preencherInput('dezenas_regra_27'); ?>">
+        </div>
+
+
+<div class="form-group">
+            <label for="soma"><strong>12 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_28" value="<?php preencherInput('quantidade_dezenas_regra_28'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra28" name="dezenas_regra_28" value="<?php preencherInput('dezenas_regra_28'); ?>">
+        </div>
+
+
+<div class="form-group">
+            <label for="soma"><strong>13 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_29" value="<?php preencherInput('quantidade_dezenas_regra_29'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra29" name="dezenas_regra_29" value="<?php preencherInput('dezenas_regra_29'); ?>">
+        </div>
+
+<div class="form-group">
+            <label for="soma"><strong>14 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_30" value="<?php preencherInput('quantidade_dezenas_regra_30'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra30" name="dezenas_regra_30" value="<?php preencherInput('dezenas_regra_30'); ?>">
+        </div>
+
+
+<div class="form-group">
+            <label for="soma"><strong>15 Até: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra até" name="quantidade_dezenas_regra_31" value="<?php preencherInput('quantidade_dezenas_regra_31'); ?>" size="1" >
+            <input size="80px" type="text" class="form-control" id="dezenas_regra31" name="dezenas_regra_31" value="<?php preencherInput('dezenas_regra_31'); ?>">
+        </div>
+
+        <div class="form-group">
+            <label for="soma"><strong>Regra Múltiplas: </strong></label>
+             <input type="text" title="Quantidade de dezenas contidas na regra multipla" name="quantidade_dezenas_multiplas" value="<?php preencherInput('quantidade_dezenas_multiplas'); ?>" size="1" >
+        </div>
+        <div>
+            <textarea cols="100" rows="2" name="dezenas_multiplas"><?php preencherInput('dezenas_multiplas') ?></textarea>
+        </div>
+</br>
+
+      <div class="form-group">
+         <label for="soma"><strong>Bem Bolado: </strong>
+             <input type="text" title="Quantidade de dezenas contidas na regra" name="bem_bolado_quantidade" value="<?php preencherInput('bem_bolado_quantidade'); ?>" size="1" >
+	 </label></br>
+            <textarea cols="50" rows="4" name="bem_bolado_fixas"><?php preencherInput('bem_bolado_fixas') ?></textarea>
+            <textarea cols="80" rows="4" name="bem_bolado_grupo"><?php preencherInput('bem_bolado_grupo') ?></textarea>
+        </div>
+
+
+        <div class="form-group">
+            <label for="quatidade-pares"><strong>Pares</strong></label>
+            <input size="40px" type="text" class="form-control" id="quantidade_dezenas_pares" name="quantidade_dezenas_pares" value="<?php preencherInput('quantidade_dezenas_pares'); ?>" >
+        </div>
+        <div class="form-group">
+            <label for="soma"><strong>Limite</strong> de Cartões</label>
+            <input size="80px" type="text" class="form-control" id="limite_cartoes" name="limite_cartoes"
+                value="<?php preencherInput('limite_cartoes'); ?>"
+             >
+        </div>
+        <div class="form-group">
+            <label for="soma">Aleatório:</label>
+            <input type="checkbox" value="1" <?php if(!empty($_REQUEST['aleatorio'])) { echo "checked='checked'"; } ?> name="aleatorio">
+            <label for="exibir_cartoes">Exibir cartões:</label>
+            <input type="checkbox" value="1" <?php if(!empty($_REQUEST['exibir_cartoes'])) { echo "checked='checked'"; } ?> name="exibir_cartoes">
+            </br>
+            <label for="bloco_dezena">Até linha:</label>
+            <input type="checkbox" value="1" <?php if(!empty($_REQUEST['bloco_dezena'])) { echo "checked='checked'"; } ?> name="bloco_dezena">
+            <input type="text" name="bloco_dezena_quantidade" value="<?php preencherInput('bloco_dezena_quantidade'); ?>" size="1" >
+            <!--
+                <input type="checkbox" value="1" <?php if(!empty($_REQUEST['bloco_dezena_igual'])) { echo "checked='checked'"; } ?> name="bloco_dezena_igual">
+                <label for="bloco_dezena">Dezenas linha:</label>
+                <input type="text" name="bloco_dezena_quantidade_igual" value="<?php preencherInput('bloco_dezena_quantidade_igual'); ?>" size="1" >
+                <label for="bloco_dezena">Quantidade linhas:</label>
+                <input type="text" name="bloco_dezena_quantidade_igual_linhas" value="<?php preencherInput('bloco_dezena_quantidade_igual_linhas'); ?>" size="1" >
+            -->
+            <br />
+            <label for="soma">Sequência linhas:</label>
+            <select name="sequencia_linhas">
+
+                <option value=""></option>
+
+                <optgroup label="Mega / Dupla">
+
+                <option value="6" <?php preencherSelect('6', 'sequencia_linhas'); ?>>6</option>
+            
+                <option value="5-1" <?php preencherSelect('5-1', 'sequencia_linhas'); ?>>5-1</option>
+            
+                <option value="4-2" <?php preencherSelect('4-2', 'sequencia_linhas'); ?>>4-2</option>
+                <option value="4-1-1" <?php preencherSelect('4-1-1', 'sequencia_linhas'); ?>>4-1-1</option>
+            
+                <option value="3-3" <?php preencherSelect('3-3', 'sequencia_linhas'); ?>>3-3</option>
+                <option value="3-2-1" <?php preencherSelect('3-2-1', 'sequencia_linhas'); ?>>3-2-1</option>
+                <option value="3-1-1-1" <?php preencherSelect('3-1-1-1', 'sequencia_linhas'); ?>>3-1-1-1</option>
+            
+                <option value="2-2-2" <?php preencherSelect('2-2-2', 'sequencia_linhas'); ?>>2-2-2</option>
+                <option value="2-2-1-1" <?php preencherSelect('2-2-1-1', 'sequencia_linhas'); ?>>2-2-1-1</option>
+                <option value="2-1-1-1-1" <?php preencherSelect('2-1-1-1-1', 'sequencia_linhas'); ?>>2-1-1-1-1</option>
+            
+                <option value="1-1-1-1-1-1" <?php preencherSelect('1-1-1-1-1-1', 'sequencia_linhas'); ?>>1-1-1-1-1-1</option>
+
+                </optgroup>
+            
+
+                <optgroup label="Quina">
+                <option value="5" <?php preencherSelect('5', 'sequencia_linhas'); ?>>5</option>
+                <option value="4-1" <?php preencherSelect('4-1', 'sequencia_linhas'); ?>>4-1</option>
+                <option value="3-2" <?php preencherSelect('3-2', 'sequencia_linhas'); ?>>3-2</option>
+                <option value="3-1-1" <?php preencherSelect('3-1-1', 'sequencia_linhas'); ?>>3-1-1</option>
+                <option value="2-2-1" <?php preencherSelect('2-2-1', 'sequencia_linhas'); ?>>2-2-1</option>
+                <option value="2-1-1-1" <?php preencherSelect('2-1-1-1', 'sequencia_linhas'); ?>>2-1-1-1</option>
+                <option value="1-1-1-1-1" <?php preencherSelect('1-1-1-1-1', 'sequencia_linhas'); ?>>1-1-1-1-1</option>
+                </optgroup>
+
+		<optgroup label="Timemania">
+
+                <option value="7" <?php preencherSelect('7', 'sequencia_linhas'); ?>>7</option>
+
+                <option value="6-1" <?php preencherSelect('6-1', 'sequencia_linhas'); ?>>6-1</option>
+            
+                <option value="5-2" <?php preencherSelect('5-2', 'sequencia_linhas'); ?>>5-2</option>
+                <option value="5-1-1" <?php preencherSelect('5-1-1', 'sequencia_linhas'); ?>>5-1-1</option>
+            
+                <option value="4-3" <?php preencherSelect('4-3', 'sequencia_linhas'); ?>>4-3</option>
+                <option value="4-2-1" <?php preencherSelect('4-2-1', 'sequencia_linhas'); ?>>4-2-1</option>
+                <option value="4-1-1-1" <?php preencherSelect('4-1-1-1', 'sequencia_linhas'); ?>>4-1-1-1</option>
+            
+                <option value="3-3-1" <?php preencherSelect('3-3-1', 'sequencia_linhas'); ?>>3-3-1</option>
+                <option value="3-2-2" <?php preencherSelect('3-2-2', 'sequencia_linhas'); ?>>3-2-2</option>
+                <option value="3-2-1-1" <?php preencherSelect('3-2-1-1', 'sequencia_linhas'); ?>>3-2-1-1</option>
+                <option value="3-1-1-1-1" <?php preencherSelect('3-1-1-1-1', 'sequencia_linhas'); ?>>3-1-1-1-1</option>
+            
+                <option value="2-2-2-1" <?php preencherSelect('2-2-2-1', 'sequencia_linhas'); ?>>2-2-2-1</option>
+                <option value="2-2-1-1-1" <?php preencherSelect('2-2-1-1-1', 'sequencia_linhas'); ?>>2-2-1-1-1</option>
+                <option value="2-1-1-1-1-1" <?php preencherSelect('2-1-1-1-1-1', 'sequencia_linhas'); ?>>2-1-1-1-1-1</option>
+            
+                <option value="1-1-1-1-1-1-1" <?php preencherSelect('1-1-1-1-1-1-1', 'sequencia_linhas'); ?>>1-1-1-1-1-1-1</option>
+
+                </optgroup>
+
+
+		<optgroup label="Dia de Sorte">
+
+                <option value="7" <?php preencherSelect('7', 'sequencia_linhas'); ?>>7</option>
+
+                <option value="6-1" <?php preencherSelect('6-1', 'sequencia_linhas'); ?>>6-1</option>
+            
+                <option value="5-2" <?php preencherSelect('5-2', 'sequencia_linhas'); ?>>5-2</option>
+                <option value="5-1-1" <?php preencherSelect('5-1-1', 'sequencia_linhas'); ?>>5-1-1</option>
+            
+                <option value="4-3" <?php preencherSelect('4-3', 'sequencia_linhas'); ?>>4-3</option>
+                <option value="4-2-1" <?php preencherSelect('4-2-1', 'sequencia_linhas'); ?>>4-2-1</option>
+                <option value="4-1-1-1" <?php preencherSelect('4-1-1-1', 'sequencia_linhas'); ?>>4-1-1-1</option>
+            
+                <option value="3-3-1" <?php preencherSelect('3-3-1', 'sequencia_linhas'); ?>>3-3-1</option>
+                <option value="3-2-2" <?php preencherSelect('3-2-2', 'sequencia_linhas'); ?>>3-2-2</option>
+                <option value="3-2-1-1" <?php preencherSelect('3-2-1-1', 'sequencia_linhas'); ?>>3-2-1-1</option>
+            
+                <option value="2-2-2-1" <?php preencherSelect('2-2-2-1', 'sequencia_linhas'); ?>>2-2-2-1</option>
+
+                </optgroup>
+
+
+            </select>
+
+            </br>
+            Qtd. Dez. à baixo:
+            <input type="text" title="Quantidade de dezenas limitadas a metade dos números" name="quantidade_dezenas_limitar" value="<?php preencherInput('quantidade_dezenas_limitar'); ?>" size="1" >
+            Qtd. Dez. pares até metade:
+            <input type="text" title="Quantidade de dezenas pares limitadas a metade dos números" name="quantidade_dezenas_pares_limitar" value="<?php preencherInput('quantidade_dezenas_pares_limitar'); ?>" size="1" >
+
+            <label for="frequencia"><strong>Frequencia</strong></label>
+            <input size="10px" type="text"  id="frequencia" name="frequencia"
+                value="<?php preencherInput('frequencia'); ?>">
+            </div>
+
+        </div>
+
+        <div style="padding-top: 5px">
+        <button type="submit" class="btn btn-primary">Calcular</button>
+        </div>
+    </form>
+
+    <?php if (!empty($resultado)) { ?>
+            <div style="margin-left: 10px;">
+            <h1><span class="cor-verde"><?= $resultado['loteria']; ?><span></h1>
+            <h2>Soma: <span class="cor-vermelha"><?= $resultado['soma']; ?><span class="cor-vermelha"></h2>
+            <h3>Cartões possíveis: <span class="cor-azul"><?= $resultado['quantideCartoesPossiveis']; ?></span> </h3>
+            <?php if (!empty($resultado['dezenasFixas'])) { ?>
+                <br />
+                <h3>Dezenas fixas: <span class="cor-azul"><?= $resultado['quantidadeDezenasFixas'];  ?></span></h3></span>
+                <h4><?= implode(' - ', $resultado['dezenasFixas']); ?></h4>
+            <?php } ?>  
+            <?php if (!empty($resultado['dezenasRemover'])) { ?>
+                <br />
+                <h3>Dezenas removidas: <span class="cor-vermelha"><?= $resultado['quantidadeDezenasRemovidas'];  ?></span></h3></span>
+                <h4><?= implode(' - ', $resultado['dezenasRemover']); ?></h4>
+            <?php } ?>    
+            <?php if (!empty($resultado['dezenasCombinadas'])) { ?>
+                <br />
+                <h3>Dezenas combinadas: <span class="cor-verde"><?= $resultado['quantidadeDezenasCombinadas'];  ?></span></h3>
+                <h4><?= implode(' - ', $resultado['dezenasCombinadas']); ?></h4>
+                <br />
+                <!-- <h3>Quantidade de cartões: <span class="cor-vermelha"><?= $resultado['quantidade'] ?></span></h3> -->
+            <?php } ?>
+            <?php if (!empty($resultado['quantidadeCartoesRemovidosBloco'])) { ?>
+               <!-- <h3>Quantidade cartões remividos por bloco: <span class="cor-azul"><?= $resultado['quantidadeCartoesRemovidosBloco']; ?></span></h3> -->
+            <?php } ?>
+            <?php if (!empty($resultado['quantidadeCartoesRemovidosFrequencia'])) { ?>
+                <h3>Removida Frequencia: <span class="cor-vermelha"><?= $resultado['quantidadeCartoesRemovidosFrequencia']; ?></span></h3>
+            <?php } ?>
+            <?php if (!empty($resultado['limiteCartoes'])) { ?>
+                <h3>Limite de cartões gerados: <span class="cor-vermelha"><?= $resultado['limiteCartoes']; ?></span></h3>
+            <?php } ?>
+            <h4>Cartões: <span class="cor-azul"><?= $resultado['quantidadeCartoesGerados']; ?><span></h4>
+            <?php if(!empty($resultado['exibirCartoes'])) { ?>
+                <br />
+                
+                <table class="table">
+                    <tbody>
+                        <?php foreach ($resultado['cartoes'] as $c => $cartao) { ?>
+                            <tr>
+                                <td><?= $cartao; ?></td>
+                            </tr>
+                        <?php }?>
+                    </tbody>
+                </table>
+            <?php } ?>
+            </div>
+    <?php } ?>
+</body>
+</html>
